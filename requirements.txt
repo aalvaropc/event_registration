@@ -1,0 +1,10 @@
+fastapi==0.78.0
+uvicorn==0.17.6
+sqlalchemy==1.4.37
+databases==0.5.5
+asyncpg==0.25.0
+qrcode==7.3
+pydantic==1.9.1
+psycopg2-binary==2.9.3
+python-multipart==0.0.5
+Pillow==10.0.0
