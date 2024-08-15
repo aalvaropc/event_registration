@@ -8,3 +8,6 @@ pydantic==1.9.1
 psycopg2-binary==2.9.3
 python-multipart==0.0.5
 Pillow==10.0.0
+aio_pika==8.2.0
+email_validator
+python-dotenv
