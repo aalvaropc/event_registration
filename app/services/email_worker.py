@@ -2,6 +2,7 @@ import aio_pika
 import asyncio
 import smtplib
 import os
+import time
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email_validator import validate_email, EmailNotValidError
@@ -39,7 +40,22 @@ def send_email(recipient_email: str):
         print(f"Error sending email: {e}")
 
 async def main():
-    connection = await aio_pika.connect_robust("amqp://guest:guest@rabbitmq/")
+    max_retries = 5
+    retry_delay = 5
+
+    for attempt in range(max_retries):
+        try:
+            connection = await aio_pika.connect_robust("amqp://guest:guest@rabbitmq/")
+            break
+        except Exception as e:
+            print(f"Attempt {attempt + 1} failed: {e}")
+            if attempt < max_retries - 1:
+                print(f"Retrying in {retry_delay} seconds...")
+                time.sleep(retry_delay)
+            else:
+                print("Failed to connect to RabbitMQ after several attempts. Exiting.")
+                return
+
     async with connection:
         async with connection.channel() as channel:
             queue = await channel.declare_queue("registration_queue", durable=True)

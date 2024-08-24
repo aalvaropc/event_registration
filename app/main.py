@@ -8,14 +8,6 @@ app = FastAPI()
 
 app.include_router(registration.router, prefix="/v1/registration")
 
-@app.on_event("startup")
-async def on_startup():
-    await init_db(engine)
-
-@app.on_event("shutdown")
-async def on_shutdown():
-    await engine.dispose()
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

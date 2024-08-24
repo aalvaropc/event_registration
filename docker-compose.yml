@@ -1,37 +1,25 @@
 version: '3.8'
 
 services:
-  db:
-    image: postgres:13
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: event_db
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
 
   web:
     build:
       context: .
       dockerfile: Dockerfile
-    depends_on:
-      - db
+    env_file:
+      - .env
     ports:
       - "8000:8000"
-    environment:
-      - DATABASE_URL=postgresql+asyncpg://user:password@db:5432/event_db
+
 
   email_worker:
     build:
       context: .
       dockerfile: Dockerfile
     depends_on:
-      - db
       - rabbitmq
+
     environment:
-      - DATABASE_URL=postgresql+asyncpg://user:password@db:5432/event_db
       - RABBITMQ_URL=amqp://guest:guest@rabbitmq/
     command: ["python", "app/services/email_worker.py"]
 
@@ -40,6 +28,3 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
-
-volumes:
-  postgres_data:
